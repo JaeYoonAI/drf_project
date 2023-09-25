@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
-from users.serializers import UserSerializer
+from users.serializers import CustomTokenObtainPairSerializer, UserSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 # Create your views here.
@@ -15,3 +16,14 @@ class UserView(APIView):
             return Response(
                 {"message": f"${serializer.errors}"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
+class mockView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return Response("get 요청")
