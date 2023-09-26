@@ -26,4 +26,5 @@ class mockView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        print(request.user)
         return Response("get 요청")
