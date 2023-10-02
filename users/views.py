@@ -3,6 +3,8 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from users.serializers import CustomTokenObtainPairSerializer, UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.generics import get_object_or_404
+from users.models import User
 
 
 # Create your views here.
@@ -16,6 +18,18 @@ class UserView(APIView):
             return Response(
                 {"message": f"${serializer.errors}"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class FollowView(APIView):
+    def post(self, request, user_id):
+        you = get_object_or_404(User, id=user_id)
+        me = request.user
+        if me in you.followers.all():
+            you.followers.remove(me)
+            return Response("follow를 취소 했습니다.", status=status.HTTP_200_OK)
+        else:
+            you.followers.add(me)
+            return Response("follow를 했습니다.", status=status.HTTP_200_OK)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
